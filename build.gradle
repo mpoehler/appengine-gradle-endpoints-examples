@@ -76,3 +76,7 @@ appengine {
         }
     }
 }
+
+clean.delete << file('src/main/webapp/WEB-INF/classes')
+clean.delete << file('src/main/webapp/WEB-INF/lib')
+clean.delete << file('src/main/webapp/WEB-INF/appengine-generated')
