@@ -1,0 +1,78 @@
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'appengine'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.1'
+}
+
+// appengine requires java version 1.7
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.42'
+    }
+}
+
+dependencies {
+    appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.44'
+    compile 'com.google.appengine:appengine-endpoints:1.9.42'
+}
+
+task copyDependencies(type: Copy) {
+    from configurations.compile
+    into 'src/main/webapp/WEB-INF/lib/'
+}
+war.dependsOn copyDependencies
+
+sourceSets {
+    main {
+        output.resourcesDir = 'src/main/webapp/WEB-INF/classes'
+        output.classesDir = 'src/main/webapp/WEB-INF/classes'
+    }
+}
+
+appengine {
+    downloadSdk = true
+    appcfg {
+        // your email that, owns the appengine project
+        email = 'mpoehler@gmail.com'
+
+        noCookies = true
+        oauth2 = true
+        // passIn = true
+
+        //warDir = file('src/main/webapp')
+
+        // this lets you connect to the appengine dev-server (jetty) with remote debugging
+        //jvmFlags = [
+        //        '-Xdebug',
+        //        '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000']
+
+        logs {
+            severity = 1
+            outputFile = file('mylogs.txt')
+        }
+
+        app {
+            // app Id from the https://console.cloud.google.com/home/dashboard
+            id = 'speedy-precept-147109'
+        }
+    }
+}

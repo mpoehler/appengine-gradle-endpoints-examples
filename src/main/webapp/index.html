@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>appengine-gradle-endpoints-example</title>
+    </head>
+    <body>
+
+        This is loaded from an endpoint: <b><span id="content"></span></b>
+        <script>
+
+            // this is called as soon as the client.js above has finished loading and is ready
+            function init() {
+                console.log("client.js is loaded");
+                // here your appid is necessary again
+                var apiRoot = 'https://'+'speedy-precept-147109'+'.appspot.com/_ah/api';
+                if (window.location.host.indexOf("localhost")>=0) {
+                    apiRoot = '//' + window.location.host + '/_ah/api';
+                }
+                console.log("apiRoot is " + apiRoot);
+                gapi.client.load('myApi', 'v1', endpointsLoaded, apiRoot);
+            }
+
+            // this function is called when the endpoints are loaded
+            function endpointsLoaded() {
+                console.log("endpoints loaded");
+                gapi.client.myApi.example.getName().then(function(resp) {
+                    console.log("return from endpoint: " + resp.result.items);
+                    document.getElementById('content').innerHTML = resp.result.items[0];
+                });
+            }
+
+        </script>
+        <!-- load web client -->
+        <script src="https://apis.google.com/js/client.js?onload=init"></script>
+    </body>
+</html>
