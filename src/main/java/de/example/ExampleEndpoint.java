@@ -6,11 +6,11 @@ package de.example;
 
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
-import com.google.api.server.spi.response.CollectionResponse;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @Api(name = "myApi", version = "v1",
         scopes = { "https://www.googleapis.com/auth/userinfo.email" },
@@ -25,8 +25,14 @@ import java.util.Set;
         }
 )
 public class ExampleEndpoint {
+
+    private static final Logger log = Logger.getLogger(ExampleEndpoint.class.getName());
+
     @ApiMethod(name = "example.getName", path = "example.getName")
     public Collection<String> getName() {
+
+        log.info("call to example.getName Endpoint");
+
         Set<String> set = new HashSet<>();
         set.add("This is from Example Endpoint");
         return set;
