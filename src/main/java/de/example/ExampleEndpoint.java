@@ -31,7 +31,7 @@ public class ExampleEndpoint {
     @ApiMethod(name = "example.getName", path = "example.getName")
     public Collection<String> getName() {
 
-        log.info("call to example.getName Endpoint");
+        log.info("call to example.getName Endpoint 2.0");
 
         Set<String> set = new HashSet<>();
         set.add("This is from Example Endpoint");

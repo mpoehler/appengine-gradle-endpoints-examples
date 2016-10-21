@@ -32,7 +32,7 @@ buildscript {
 
 dependencies {
     appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.44'
-    compile 'com.google.appengine:appengine-endpoints:1.9.42'
+    compile 'com.google.endpoints:endpoints-framework:2.0.0-beta.8'
 }
 
 task copyDependencies(type: Copy) {
