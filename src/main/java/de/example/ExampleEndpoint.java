@@ -6,6 +6,8 @@ package de.example;
 
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
+import com.google.inject.Inject;
+import de.example.service.ExampleService;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,13 +30,16 @@ public class ExampleEndpoint {
 
     private static final Logger log = Logger.getLogger(ExampleEndpoint.class.getName());
 
+    @Inject
+    protected ExampleService exampleService;
+
     @ApiMethod(name = "example.getName", path = "example.getName")
     public Collection<String> getName() {
 
         log.info("call to example.getName Endpoint 2.0");
 
         Set<String> set = new HashSet<>();
-        set.add("This is from Example Endpoint");
+        set.add(exampleService.getName());
         return set;
     }
 }

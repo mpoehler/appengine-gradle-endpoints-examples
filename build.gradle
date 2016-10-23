@@ -33,6 +33,10 @@ buildscript {
 dependencies {
     appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.44'
     compile 'com.google.endpoints:endpoints-framework:2.0.0-beta.8'
+    compile 'com.google.endpoints:endpoints-framework-guice:2.0.0-beta.8'
+
+    compile 'com.google.inject:guice:4.1.0'
+    compile 'com.google.inject.extensions:guice-servlet:4.1.0'
 }
 
 task copyDependencies(type: Copy) {
