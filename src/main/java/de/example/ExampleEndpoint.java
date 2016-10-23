@@ -6,6 +6,7 @@ package de.example;
 
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
+import com.google.appengine.api.users.User;
 import com.google.inject.Inject;
 import de.example.service.ExampleService;
 
@@ -34,7 +35,14 @@ public class ExampleEndpoint {
     protected ExampleService exampleService;
 
     @ApiMethod(name = "example.getName", path = "example.getName")
-    public Collection<String> getName() {
+    public Collection<String> getName(User user) {
+
+
+        if (user != null) {
+            log.info("User: " + user.toString());
+        } else {
+            log.info("No User.");
+        }
 
         log.info("call to example.getName Endpoint 2.0");
 

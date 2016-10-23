@@ -62,7 +62,7 @@ appengine {
         oauth2 = true
         // passIn = true
 
-        //warDir = file('src/main/webapp')
+        warDir = file('src/main/webapp')
 
         // this lets you connect to the appengine dev-server (jetty) with remote debugging
         //jvmFlags = [

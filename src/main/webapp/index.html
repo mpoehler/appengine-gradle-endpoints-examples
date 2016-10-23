@@ -7,29 +7,56 @@
     <body>
 
         This is loaded from an endpoint: <b><span id="content"></span></b>
-        <script>
 
-            // this is called as soon as the client.js above has finished loading and is ready
+        <script>
             function init() {
-                console.log("client.js is loaded");
-                // here your appid is necessary again
+                var apisToLoad;
+                var loadCallback = function() {
+                    if (--apisToLoad == 0) {
+                        signin(false, userAuthed);
+                    }
+                };
+
                 var apiRoot = 'https://'+'speedy-precept-147109'+'.appspot.com/_ah/api';
                 if (window.location.host.indexOf("localhost")>=0) {
                     apiRoot = '//' + window.location.host + '/_ah/api';
                 }
-                console.log("apiRoot is " + apiRoot);
-                gapi.client.load('myApi', 'v1', endpointsLoaded, apiRoot);
+
+                apisToLoad = 2; // must match number of calls to gapi.client.load()
+                gapi.client.load('myApi', 'v1', loadCallback, apiRoot);
+                gapi.client.load('oauth2', 'v2', loadCallback);
+            }
+
+            function signin(mode, authorizeCallback) {
+                gapi.auth.authorize(
+                        {
+                            client_id: '1065372429076-g8por2o8vlug3dtgf1i7n96i5nq51d4b.apps.googleusercontent.com',
+                            scope: 'https://www.googleapis.com/auth/userinfo.email',
+                            immediate: mode
+                        },
+                        authorizeCallback
+                );
+            }
+
+            function userAuthed() {
+                var request =
+                        gapi.client.oauth2.userinfo.get().execute(function(resp) {
+                            if (!resp.code) {
+                                // User is signed in
+                                console.log("user authorized successful " + resp);
+                                endpointsLoadedUserAuth();
+                            }
+                        });
             }
 
             // this function is called when the endpoints are loaded
-            function endpointsLoaded() {
+            function endpointsLoadedUserAuth() {
                 console.log("endpoints loaded");
                 gapi.client.myApi.example.getName().then(function(resp) {
                     console.log("return from endpoint: " + resp.result.items);
                     document.getElementById('content').innerHTML = resp.result.items[0];
                 });
             }
-
         </script>
         <!-- load web client -->
         <script src="https://apis.google.com/js/client.js?onload=init"></script>
