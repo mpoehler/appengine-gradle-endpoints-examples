@@ -15,7 +15,7 @@
                 // here your appid is necessary again
                 var apiRoot = 'https://'+'speedy-precept-147109'+'.appspot.com/_ah/api';
                 if (window.location.host.indexOf("localhost")>=0) {
-                    apiRoot = '//' + window.location.host + '/_ah/api';
+                    apiRoot = '//localhost:8081/_ah/api';
                 }
                 console.log("apiRoot is " + apiRoot);
                 gapi.client.load('myApi', 'v1', endpointsLoaded, apiRoot);

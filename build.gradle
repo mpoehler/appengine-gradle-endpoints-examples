@@ -1,82 +1,54 @@
+buildscript {    // Configuration for building
+    repositories {
+        jcenter()    // Bintray's repository - a fast Maven Central mirror & more
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:+'    // latest App Engine Gradle tasks
+    }
+}
 
-apply plugin: 'java'
-apply plugin: 'war'
-apply plugin: 'appengine'
+repositories {   // repositories for Jar's you access in your code
+    maven {
+        url 'https://maven-central.storage.googleapis.com'             // Google's mirror of Maven Central
+//   url 'https://oss.sonatype.org/content/repositories/snapshots' // SNAPSHOT Repository (if needed)
+    }
+    jcenter()
+    mavenCentral()
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.1'
 }
 
-// appengine requires java version 1.7
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
-
-repositories {
-    mavenLocal()
-    jcenter()
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
-
-buildscript {
-    repositories {
-        mavenLocal()
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.42'
-    }
-}
+apply plugin: 'java'                              // standard Java tasks
+apply plugin: 'war'                               // standard Web Archive plugin
+apply plugin: 'com.google.cloud.tools.appengine'  // App Engine tasks
 
 dependencies {
-    appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.44'
+    providedCompile group: 'javax.servlet', name: 'servlet-api', version:'2.5'
+    compile 'com.google.appengine:appengine:+'
+    // Add your dependencies here.
     compile 'com.google.appengine:appengine-endpoints:1.9.42'
+
 }
 
-task copyDependencies(type: Copy) {
-    from configurations.compile
-    into 'src/main/webapp/WEB-INF/lib/'
-}
-war.dependsOn copyDependencies
+appengine {  // App Engine tasks configuration
+    run {      // local (dev_appserver) configuration (standard environments only)
+        port = 8080                 // default
+        apiPort = 8081
+    }
 
-sourceSets {
-    main {
-        output.resourcesDir = 'src/main/webapp/WEB-INF/classes'
-        output.classesDir = 'src/main/webapp/WEB-INF/classes'
+    deploy {   // deploy configuration
+        stopPreviousVersion = true  // default - stop the current version
+        promote = true              // default - & make this the current version
     }
 }
 
-appengine {
-    downloadSdk = true
-    appcfg {
-        // your email that, owns the appengine project
-        email = 'mpoehler@gmail.com'
+group = 'com.example.appengine'   // Generated output GroupId
+version = '1.0-SNAPSHOT'          // Version in generated output
 
-        noCookies = true
-        oauth2 = true
-        // passIn = true
+sourceCompatibility = 1.7  // App Engine Standard uses Java 7
+targetCompatibility = 1.7  // App Engine Standard uses Java 7
 
-        //warDir = file('src/main/webapp')
-
-        // this lets you connect to the appengine dev-server (jetty) with remote debugging
-        //jvmFlags = [
-        //        '-Xdebug',
-        //        '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000']
-
-        logs {
-            severity = 1
-            outputFile = file('mylogs.txt')
-        }
-
-        app {
-            // app Id from the https://console.cloud.google.com/home/dashboard
-            id = 'speedy-precept-147109'
-        }
-    }
-}
-
-clean.delete << file('src/main/webapp/WEB-INF/classes')
-clean.delete << file('src/main/webapp/WEB-INF/lib')
-clean.delete << file('src/main/webapp/WEB-INF/appengine-generated')
+clean.delete << file('build')
